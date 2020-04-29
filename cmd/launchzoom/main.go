@@ -10,10 +10,7 @@ package main
 // https://XXX.zoom.us/j/99999999?pwd=alosghergeruhgihugkfjhsrkgjh
 
 import (
-	b64 "encoding/base64"
 	"fmt"
-	"log"
-	"net"
 	"os"
 
 	"github.com/nullvariable/launchzoom/pkg/util"
@@ -24,23 +21,15 @@ const SockAddr = "/tmp/launchzoom.sock"
 func main() {
 	if len(os.Args) > 1 && os.Args[1] != "" { // if we're passed a url, try to connect and then exit.
 		fmt.Println(os.Args[1])
-		c, err := net.Dial("unix", SockAddr)
+		err := util.WriteToSock(os.Args[1])
 		if err != nil { // no socket, so just launch.
 			fmt.Println("no socket found :(")
 			// panic(err)
 			util.Launch(os.Args[1])
-
 			os.Exit(1)
 		}
-		defer c.Close()
-		sEnc := b64.StdEncoding.EncodeToString([]byte(os.Args[1]))
-		println("Sending: " + string(sEnc))
-		_, err = c.Write([]byte(sEnc))
-		if err != nil {
-			log.Fatal("write error:", err)
-		}
 	} else { // no url
-		fmt.Println("Please pass a url as an argument")
+		fmt.Println("Please pass an argument")
 	}
 }
 
