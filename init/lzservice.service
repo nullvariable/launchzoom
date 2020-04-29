@@ -1,0 +1,13 @@
+[Unit]
+Description=LaunchZoomService
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/lzservice
+StandardOutput=null
+RestartSec=10s
+Restart=on-failure
+
+[Install]
+WantedBy=default.target
+Alias=lzservice

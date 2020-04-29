@@ -1,0 +1,18 @@
+#!/bin/bash
+
+# https://stackoverflow.com/a/4774063
+SCRIPTPATH="$( cd "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
+
+go build -o bin $SCRIPTPATH/cmd/launchzoom
+go build -o bin $SCRIPTPATH/cmd/lzservice
+
+[ ! -d ~/.config/systemd ] && mkdir ~/.config/systemd
+[ ! -d ~/.config/systemd/user ] && mkdir ~/.config/systemd/user
+cp $SCRIPTPATH/init/lzservice.service ~/.config/systemd/user/lzservice.service
+
+[ ! -L /usr/local/bin/launchzoom ] && sudo ln -s $SCRIPTPATH/bin/launchzoom /usr/local/bin/launchzoom
+[ ! -L /usr/local/bin/lzservice ] && sudo ln -s $SCRIPTPATH/bin/lzservice /usr/local/bin/lzservice
+
+systemctl --user daemon-reload
+systemctl --user enable lzservice
+systemctl --user start lzservice
